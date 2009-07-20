@@ -1,0 +1,10 @@
+Package: DEFFbinary
+Type: Package
+Title: Compute the design effect for correlated binary data
+Version: 0.1
+Date: 2009-07-17
+Author: Patrick Brown, Hedy Jiang
+Maintainer: Patrick Brown <patrick.brown@utoronto.ca>
+Description: This package implements  the method in Brown and Jiang (2009), "Intraclass Correlation and the Design Effect for Binary Random Effects Models", unpublished. Computes the intraclass correlation, the design effect, and standard errors for the intercept for a binary-valued model with a group-level random effect, when the number of groups and number of observations per group are specified.   
+License: GPL
+LazyLoad: yes
