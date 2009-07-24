@@ -1,6 +1,6 @@
 DEFFbinary = function(
     logitMean, sigma, 
-    NperGroup=NULL,Ngroups=NULL,  Nsim = 200000) {
+    NperGroup=NULL,Ngroups=NULL,  Nsim = 1000) {
 
   # simulate some normals to find the moments of the logit-normal  
   theSim = rnorm(Nsim, logitMean, sigma)
