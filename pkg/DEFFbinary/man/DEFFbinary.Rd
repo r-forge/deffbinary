@@ -8,7 +8,7 @@ Compute the design effect for correlated binary data
 This package computes the intraclass correlation, the design effect, and standard errors for the intercept for a binary-valued model with a group-level random effect, when the number of groups and number of observations per group are specified.   
 }
 \usage{
-DEFFbinary(logitMean, sigma, NperGroup = NULL, Ngroups = NULL, Nsim = 2e+05)
+DEFFbinary(logitMean, sigma, NperGroup = NULL, Ngroups = NULL, Nsim = 1000)
 }
 \arguments{
   \item{logitMean}{
