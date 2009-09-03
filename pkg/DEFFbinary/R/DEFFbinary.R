@@ -22,11 +22,13 @@ DEFFbinary = function(
 # if Ngroups is specified, compute the standard error
 if(!is.null(Ngroups)) {
 	totalSize = NperGroup*Ngroups
-	result["SE"] = 1/sqrt( (totalSize/result["DEFF"]) * moment1*(1-moment1))	
+	result["EffectiveSampleSize"] =  (totalSize/result["DEFF"])
+	result["SE"] = 1/sqrt(  result["EffectiveSampleSize"] * moment1*(1-moment1))	
 }
 
-# save the moments as attributes  
- attributes(result)$moments = c(first=moment1, second=moment2)
+# save the moments 
+ result["firstMoment"] = moment1
+ result["secondMoment"] = moment2
 
 result
 }
