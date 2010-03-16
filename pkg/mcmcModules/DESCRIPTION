@@ -1,0 +1,13 @@
+ Package: mcmcModules
+     Version: 0.0-1
+     Date: 2010-03-16
+     Title: Modules for building MCMC routines
+     Author: Patrick Brown <patrick.brown@utoronto.ca>
+     Maintainer: Patrick Brown <patrick.brown@utoronto.ca>
+     Depends: 
+     Suggests: 
+     Description: Provides functions for updating parameters using MCMC,
+     which can be combined together and with user-defined functions to 
+     perform statistical inference with MCMC
+     License: GPL-2
+     URL: 
