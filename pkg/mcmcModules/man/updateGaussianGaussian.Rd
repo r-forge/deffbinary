@@ -1,7 +1,6 @@
-#  mcmcModules
-\name{}
+\name{updateGaussianGaussian}
 \alias{}
-\title{}
+\title{Update Gaussian parameters with Gaussian observations}
 \description{
      }
 \usage{

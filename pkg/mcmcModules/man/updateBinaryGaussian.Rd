@@ -1,5 +1,5 @@
 \name{updateBinaryGaussian}
-\alias{}
+\alias{updateBinaryGaussian}
 \title{Update Gaussian parameters with Binary observations}
 \description{
 	Generates a sample from the posterior of a Gaussian parameter 
@@ -40,15 +40,16 @@ A vector of coefficients
 	
 	offset = seq(from=-5, len=Nobservations, by=1)
 	
-	meanLink = X %*% coef + offest
+	meanLink = X %*% coef + offset
 	probs = exp(meanLink) / (1+exp(meanLink))
 	
 	y = rbinom(Nobservations, 1, probs)
 
 
 	# generate posterior sample
-	posteriorSample = updateBinaryGaussian(y, X, c(0,0), 
-		offset, c(1,2), precisionCoef=c(0.01, 0.01), 
+	posteriorSample = updateBinaryGaussian(y, X, 
+		coef=c(0,0), 
+		offset, meanCoef=c(1,2), precisionCoef=c(0.01, 0.01), 
 		niter=10, sdProposal=1, link="logit")
 
 }

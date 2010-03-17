@@ -1,7 +1,6 @@
-#  mcmcModules
-\name{}
+\name{updateGaussianGamma}
 \alias{}
-\title{}
+\title{Update Inverse Gamma distributed variances with Gaussian observations}
 \description{
      }
 \usage{
