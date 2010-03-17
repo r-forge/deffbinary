@@ -48,9 +48,10 @@ A vector of coefficients
 
 	# generate posterior sample
 	posteriorSample = updateBinaryGaussian(y, X, 
-		coef=c(0,0), 
-		offset, meanCoef=c(1,2), precisionCoef=c(0.01, 0.01), 
-		niter=10, sdProposal=1, link="logit")
+		coef=c(2,1), 
+		offsetY=offset, meanCoef=c(1,2), precisionCoef=c(0.01, 0.01), 
+		niter=10, sdProposal=c(0.2,0.1), link="logit")
+	posteriorSample	 
 
 }
 \keyword{}
