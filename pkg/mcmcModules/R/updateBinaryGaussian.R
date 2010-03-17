@@ -1,6 +1,7 @@
-updateBinaryGaussian <- function(y, X=NULL, coef, offsetY, meanCoef, precisionCoef, 
+updateBinaryGaussian <- function(y, X=NULL, coef, offsetY=0, meanCoef, precisionCoef, 
 		niter=1, sdProposal=1, link=c("logit","cloglog"), ...) {
 
+# create the link function
 link<-link[1]
 if(link=="logit") {
 	linkFun = function(qq) qq/ (1+qq)
@@ -11,7 +12,7 @@ if(link=="logit") {
 }	
 
 if(length(coef)==1)	{ # univariate normal
-	# simulate from the proposal distribution
+	# function to simulate from the proposal distribution
 	simProp <- function() rnorm(1,mean=coef, sd=sdProposal)
 	# function to calculate the log ratio of the 
 	# priors of new and proposed coefficients
@@ -21,8 +22,9 @@ if(length(coef)==1)	{ # univariate normal
 	}
 } else {# multivariate
 	if(!is.matrix(sdProposal)){ 
-		# sdProposal is a vector of standard deviations rather than a variance matrix
-		sdProposal = diag(sdProposal, length(coef))
+		# sdProposal is a vector of standard deviations 
+			# rather than a variance matrix
+		sdProposal = diag(sdProposal*sdProposal, length(coef))
 	}
 	if(!is.matrix(precisionCoef)){
 		precisionCoef = diag(precisionCoef, length(coef))
