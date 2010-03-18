@@ -1,6 +1,6 @@
-updateBinaryGaussian <- function(y, X=NULL, coef, offsetY=0, meanCoef, precisionCoef, 
-		niter=1, sdProposal=1, link=c("logit","cloglog"), ...) {
-
+updateBinaryGaussian <- function(y, X=1, coef, offsetY=0, meanCoef, precisionCoef, 
+		niter=1, sdProposal=1, link=c("logit","cloglog"), ...) {	
+	
 # create the link function
 link<-link[1]
 if(link=="logit") {
@@ -48,6 +48,8 @@ for(Diter in 1:niter){
 	probsNew <- linkFun(exp(offsetY + as.matrix(X) %*% proposedCoef) )
 
 	# calculate old and new likelihoods
+		# log likelihood is y*probsOld + (1-y)*(1-probsOld)
+		# new log L - old log L = y(probsNew - probsOld) + (1-y)(probsNew - probsOld)
 	onemy = 1-y
 	probsDiff = probsNew - probsOld
 	ratio <- exp(sum(y*probsDiff - onemy*probsDiff) + priorDiff())

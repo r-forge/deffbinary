@@ -6,7 +6,7 @@
 	or random effect when observations are binary
      }
 \usage{
-	updateBinaryGaussian(y, X=NULL, coef, offsetY, meanCoef, precisionCoef, 
+	updateBinaryGaussian(y, X=1, coef, offsetY, meanCoef, precisionCoef, 
 	niter=1, sdProposal=1, link=c("logit","cloglog"), ...)
      }
 \arguments{
@@ -30,14 +30,14 @@
 The model used is the following:
 	\deqn{	Y_i ~ Bern(p_i)}
 	\deqn{	link(p_i) = offset_i + X_i coef }
-	\deqn{	coef ~ N(meanX, precisionX^(-1))}
-Currently all coefficients are updated simultaneously.	
+	\deqn{	coef ~ N(meanCoef, precisionCoef^(-1))}
+	Currently all coefficients are updated simultaneously.	
 } 
 \value{
 A vector of coefficients, with attributes specifying acceptance rates.
 }	    
 \seealso{
-     \code{\link{}}.
+     \code{\link{updateGaussianGaussian}}.
      }
 \examples{
 	# simulate some data
