@@ -8,20 +8,24 @@ updateGaussianGaussian<- function(y, X=1, offsetY,
 	
 	
 	# create variance matrix of coefficients
+	# or vector of variances if coefficients are independent
 	if(is.null(varCoef)){
 		if(is.vector(precisionCoef)) {
 			varCoef = 1/precisionCoef	
 		} else {
-			varCoef =solve(precisionCoef)	
+			varCoef =chol2inv(chol(precisionCoef))	
 		}
 	}
+	# compute X %*% varCoef
+	# different methods depending on whether varCoef is diagonal matrix
+	# stored as a vector
 	if(is.vector(varCoef)) {
 		XvarCoef = X * matrix(varCoef, nrow=length(y),ncol=Ncoef) 
-			
 	} else {	
 		XvarCoef =  X %*% varCoef   
 	}	
 	
+	# marginal variance of coefficients
 	varYmarg = XvarCoef %*% t(X) 
 	if(is.null(varY)){
 		if(is.vector(precisionY)) {
@@ -37,7 +41,8 @@ updateGaussianGaussian<- function(y, X=1, offsetY,
 		}
 		
 	}
-	
+
+	# conditional variance matrix of coefficients
 	precisionYmarg = chol2inv(chol(varYmarg))
 
 	varCoefXY = t(varCoefX) %*% precisionYmarg
@@ -54,7 +59,7 @@ updateGaussianGaussian<- function(y, X=1, offsetY,
 		CondVar <- varCoef - CondVar
 	}
 	
+	# generate random normals
 	thechol = chol(CondVar) 
-	
 	as.vector( rnorm(Ncoef, postMean, 1) %*% thechol)	
 }
