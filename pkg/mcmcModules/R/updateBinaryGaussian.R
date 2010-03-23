@@ -1,38 +1,46 @@
 updateBinaryGaussian <- function(y, X=1, coef, offsetY=0, meanCoef, precisionCoef, 
 		niter=1, sdProposal=1, link=c("logit","cloglog"), ...) {	
 	
-# create the link function
+# function to calculate logs of probabilities
+	# and logs of one minus probabilities, depends on the link function
 link<-link[1]
 if(link=="logit") {
-	linkFun = function(qq) qq/ (1+qq)
+	logProbs = function(qq) {
+		log1pexpqq = -log(1+exp(qq))
+		list(probs = qq + log1pexpqq,
+			onemProbs =  log1pexpqq)
+	}
 } else if(link=="cloglog"){
-	linkFun = function(qq) 1-exp(-qq)
+	logProbs = function(qq) {
+		minusexpqq = -exp(qq)
+		list(probs = log(1-exp(minusexpqq)),
+			onemProbs =  minusexpqq)
+	}
 } else {
 	warning("link not found: ",link)
 }	
 
-if(length(coef)==1)	{ # univariate normal
+Ncoef = length(coef)
+
+# function to simulate from the proposal, depends on whether proposal is independent
+if(is.vector(sdProposal)){
 	# function to simulate from the proposal distribution
-	simProp <- function() rnorm(1,mean=coef, sd=sdProposal)
-	# function to calculate the log ratio of the 
-	# priors of new and proposed coefficients
-	priorDiff <- function() {
-		coefDiff = proposedCoef - coef
-		-0.5*(coefDiff*coefDiff*precisionCoef)
-	}
-} else {# multivariate
-	if(!is.matrix(sdProposal)){ 
-		# sdProposal is a vector of standard deviations 
-			# rather than a variance matrix
-		sdProposal = diag(sdProposal*sdProposal, length(coef))
-	}
-	if(!is.matrix(precisionCoef)){
-		precisionCoef = diag(precisionCoef, length(coef))
-	}
+	simProp <- function() rnorm(Ncoef,mean=coef, sd=sdProposal)
+} else {
+	# assume sdProposal is a variance matrix
 	simProp <- function() as.vector(rmvnorm(1,mean=coef, sigma=sdProposal))
+}
+
+# calculate the difference in log probabilities of prior for new and old coefficients
+					# depends on whether prior is independent or not
+if(is.vector(precisionCoef)){
 	priorDiff <- function() {
 		coefDiff = proposedCoef - coef
-		-0.5*(coefDiff %*% precisionCoef %*% coefDiff)
+		-0.5*sum(coefDiff^2*precisionCoef)
+	}
+} else{
+	priorDiff <- function() {
+		-0.5*(proposedCoef %*% precisionCoef %*% proposedCoef  - coef %*% precisionCoef %*% coef)
 	}
 }
 
@@ -44,15 +52,18 @@ for(Diter in 1:niter){
 	proposedCoef <- simProp()
 	
 	# calculate old and new probabilities
-	probsOld <- linkFun(exp(offsetY + as.matrix(X) %*% coef) )
-	probsNew <- linkFun(exp(offsetY + as.matrix(X) %*% proposedCoef) )
+	logProbsOld <- logProbs(offsetY + as.matrix(X) %*% coef) 
+	logProbsNew <- logProbs(offsetY + as.matrix(X) %*% proposedCoef) 
 
 	# calculate old and new likelihoods
-		# log likelihood is y*probsOld + (1-y)*(1-probsOld)
-		# new log L - old log L = y(probsNew - probsOld) + (1-y)(probsNew - probsOld)
+		# log likelihood is y*logProbsOld + (1-y)*(1-logProbsOld)
 	onemy = 1-y
-	probsDiff = probsNew - probsOld
-	ratio <- exp(sum(y*probsDiff - onemy*probsDiff) + priorDiff())
+
+	ratio <- exp(sum(
+					y*(logProbsNew$probs - logProbsOld$probs) - 
+							onemy*(logProbsNew$onemProbs - logProbsOld$onemProbs)
+					) + 
+			priorDiff())
 
 	accept = runif(1)<ratio
 	

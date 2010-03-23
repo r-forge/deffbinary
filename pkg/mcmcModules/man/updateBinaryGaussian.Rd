@@ -57,7 +57,7 @@ A vector of coefficients, with attributes specifying acceptance rates.
 	posteriorSample = updateBinaryGaussian(y, X, 
 		coef=c(2,1), 
 		offsetY=offset, meanCoef=c(1,2), precisionCoef=c(0.01, 0.01), 
-		niter=10, sdProposal=c(0.2,0.1), link="logit")
+		niter=10, sdProposal=c(0.5,0.4), link="logit")
 	posteriorSample	 
 
 }

@@ -1,62 +1,60 @@
-updateGaussianGaussian<- function(y, X=1, coef, offsetY,precisionY, 
-		meanCoef, precisionCoef, 
-		niter=1, sdProposal=1 , ...){
-
-	if(!is.matrix(sdProposal)){ 
-		# sdProposal is a vector of standard deviations 
-		# rather than a variance matrix
-		sdProposal = diag(sdProposal*sdProposal, length(coef))
+updateGaussianGaussian<- function(y, X=1, offsetY, 
+		precisionY=NULL, varY=NULL,
+		meanCoef, precisionCoef=NULL, varCoef = NULL,
+		...){
+	if(is.matrix(X)){
+		Ncoef =dim(X)[2]
+	} else Ncoef = 1
+	
+	
+	# create variance matrix of coefficients
+	if(is.null(varCoef)){
+		if(is.vector(precisionCoef)) {
+			varCoef = 1/precisionCoef	
+		} else {
+			varCoef =solve(precisionCoef)	
+		}
 	}
-	# funtion to simulate from the proposal distribution
-	simProp <- function() as.vector(rmvnorm(1,mean=coef, sigma=sdProposal))
-
-	if(is.matrix(precisionCoef)){
-		priorDiff <- function() {
-			coefDiff = proposedCoef - coef
-			-0.5*(coefDiff %*% precisionCoef %*% coefDiff)
-		}
-	} else {
-		# preceisionCoef is vector or scalar
-		priorDiff <- function() {
-			coefDiff = proposedCoef - coef
-			sum((-0.5)*precisionCoef*coefDiff*coefDiff)
-		}
+	if(is.vector(varCoef)) {
+		XvarCoef = X * matrix(varCoef, nrow=length(y),ncol=Ncoef) 
+			
+	} else {	
+		XvarCoef =  X %*% varCoef   
 	}	
 	
-	
-	# conditional variance matrix, doesnt change with iterations
-	varCoefCondnY <- 
-	
-	
-	acceptRatio<-0
-	
-	for(Diter in 1:niter){	
-		
-		# simulate proposal	
-		proposedCoef <- simProp()
-		
-		# calculate old and new probabilities
-		probsOld <- linkFun(exp(offsetY + as.matrix(X) %*% coef) )
-		probsNew <- linkFun(exp(offsetY + as.matrix(X) %*% proposedCoef) )
-		
-		# calculate old and new likelihoods
-		onemy = 1-y
-		probsDiff = probsNew - probsOld
-		ratio <- exp(sum(y*probsDiff - onemy*probsDiff) + priorDiff())
-		
-		accept = runif(1)<ratio
-		
-		if(accept) {
-			coef <- proposedCoef 
-			acceptRatio <- acceptRatio + accept
+	varYmarg = XvarCoef %*% t(X) 
+	if(is.null(varY)){
+		if(is.vector(precisionY)) {
+			diag(varYmarg) = diag(varYmarg) + 1/precisionY	
+		} else {
+			varYmarg = varYmarg + solve(precisionY)	
 		}
-	} # end iteration loop
+	} else {
+		if(is.vector(varY)) {
+			diag(varYmarg) = diag(varYmarg) + varY	
+		} else {
+			varYmarg = varYmarg + varY	
+		}
+		
+	}
 	
-	attributes(coef)$mcmc <- c(acceptRatio=acceptRatio/niter,
-			niter=niter)
-	attributes(coef)$sdProposal = sdProposal	
-	
-	coef
-	
+	precisionYmarg = chol2inv(chol(varYmarg))
 
+	varCoefXY = t(varCoefX) %*% precisionYmarg
+
+	CondVar <- varCoefXY %*% varCoefX
+		
+	postMean <-  meanCoef +  varCoefXY %*% (y-offsetY)
+	
+	
+	if(is.vector(varCoef)){
+		CondVar <-  - CondVar
+		diag(CondVar) <- varCoef + diag(CondVar)
+	} else {
+		CondVar <- varCoef - CondVar
+	}
+	
+	thechol = chol(CondVar) 
+	
+	as.vector( rnorm(Ncoef, postMean, 1) %*% thechol)	
 }
