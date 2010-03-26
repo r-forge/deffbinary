@@ -1,4 +1,4 @@
-updateBinaryGaussian <- function(y, X=1, coef, offsetY=0, meanCoef, precisionCoef, 
+updateBinaryGaussian <- function(y, X, coef, offsetY=0, precisionCoef, 
 		niter=1, sdProposal=1, link=c("logit","cloglog"), ...) {	
 	
 # function to calculate logs of probabilities
@@ -21,7 +21,8 @@ if(link=="logit") {
 }	
 
 Ncoef = length(coef)
-
+library(mvtnorm)
+library(MCMCpack)
 # function to simulate from the proposal, depends on whether proposal is independent
 if(is.vector(sdProposal)){
 	# function to simulate from the proposal distribution
@@ -40,16 +41,21 @@ if(is.vector(precisionCoef)){
 	}
 } else{
 	priorDiff <- function() {
-		-0.5*(proposedCoef %*% precisionCoef %*% proposedCoef  - coef %*% precisionCoef %*% coef)
+		-0.5*(proposedCoef %*% precisionCoef %*% proposedCoef  - coef %*% precisionCoef %*% coef)     
 	}
 }
 
 acceptRatio<-0
-
+f=3    #	f:degree of freedom 
+covX=cov(X)
+nobs=dim(X)[1]
 for(Diter in 1:niter){	
 	
+  #posterior distribution of the variance-covariance matrix  
+	precisionCoef <- riwish(f+nobs, precisionCoef+nobs*covX)
 	# simulate proposal	
 	proposedCoef <- simProp()
+
 	
 	# calculate old and new probabilities
 	logProbsOld <- logProbs(offsetY + as.matrix(X) %*% coef) 
@@ -72,7 +78,7 @@ for(Diter in 1:niter){
 		acceptRatio <- acceptRatio + accept
 	}
 } # end iteration loop
-			
+		
 	attributes(coef)$mcmc <- c(acceptRatio=acceptRatio/niter,
 				niter=niter)
 	attributes(coef)$sdProposal = sdProposal	

@@ -42,8 +42,8 @@ A vector of coefficients, with attributes specifying acceptance rates.
 \examples{
 	# simulate some data
 	Nobservations = 20
-	X = cbind(1, 1:20)
-	coef = c(0, 1)
+	X = cbind(c(1:5, 2:6,rep(1,10)), 1:20)
+	coef = c(0.1, 1)
 	
 	offset = seq(from=-5, len=Nobservations, by=1)
 	
@@ -56,8 +56,8 @@ A vector of coefficients, with attributes specifying acceptance rates.
 	# generate posterior sample
 	posteriorSample = updateBinaryGaussian(y, X, 
 		coef=c(2,1), 
-		offsetY=offset, meanCoef=c(1,2), precisionCoef=c(0.01, 0.01), 
-		niter=10, sdProposal=c(0.5,0.4), link="logit")
+		offsetY=offset, meanCoef=c(1,2), precisionCoef=matrix(c(0.01, 0,0,0.01), ncol=2), 
+		niter=1000, sdProposal=matrix(c(0.5,0,0,0.4),ncol=2), link="logit")
 	posteriorSample	 
 
 }
