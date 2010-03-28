@@ -20,9 +20,7 @@ if(link=="logit") {
 	warning("link not found: ",link)
 }	
 
-Ncoef = length(coef)
-library(mvtnorm)
-library(MCMCpack)
+
 # function to simulate from the proposal, depends on whether proposal is independent
 if(is.vector(sdProposal)){
 	# function to simulate from the proposal distribution
@@ -47,12 +45,10 @@ if(is.vector(precisionCoef)){
 
 acceptRatio<-0
 f=3    #	f:degree of freedom 
-covX=cov(X)
-nobs=dim(X)[1]
+
 for(Diter in 1:niter){	
 	
-  #posterior distribution of the variance-covariance matrix  
-	precisionCoef <- riwish(f+nobs, precisionCoef+nobs*covX)
+  
 	# simulate proposal	
 	proposedCoef <- simProp()
 
@@ -74,11 +70,16 @@ for(Diter in 1:niter){
 	accept = runif(1)<ratio
 	
 	if(accept) {
+	  coefold <- coef
 		coef <- proposedCoef 
 		acceptRatio <- acceptRatio + accept
 	}
 } # end iteration loop
-		
+
+	#posterior distribution of the variance-covariance matrix 
+   
+	precisionCoef <- riwish(f+1, precisionCoef+cov((rbind(coef, proposedCoef))
+))	
 	attributes(coef)$mcmc <- c(acceptRatio=acceptRatio/niter,
 				niter=niter)
 	attributes(coef)$sdProposal = sdProposal	
