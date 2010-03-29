@@ -44,7 +44,7 @@ if(is.vector(precisionCoef)){
 }
 
 acceptRatio<-0
-f=3    #	f:degree of freedom 
+
 
 for(Diter in 1:niter){	
 	
@@ -78,7 +78,7 @@ for(Diter in 1:niter){
 
 	#posterior distribution of the variance-covariance matrix 
    
-	precisionCoef <- riwish(f+1, precisionCoef+cov((rbind(coef, proposedCoef))
+
 ))	
 	attributes(coef)$mcmc <- c(acceptRatio=acceptRatio/niter,
 				niter=niter)
