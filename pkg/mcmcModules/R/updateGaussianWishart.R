@@ -1,16 +1,19 @@
-updateGaussianWishart <- function(y, var, meanVar, shapeVar, meany=NULL, 
+updateGaussianWishart <- function(y, meanVar, shapeVar, meanY=NULL, 
 		 ...) {
 	
-	if(!is.null(meany))
-    	y = y - meany
+	if(!is.null(meanY))
+    	y = y - meanY
 	 
-	y = as.matrix(y)
-	Nvar = dim(y)[2]
+	if(is.matrix(y)) {
+		Ny = dim(y)[1]
+	} else {
+		Ny = length(y)
+	}
 	
-	sampleCov = var(y)*(dim(y)[1])
+	sampleCov = var(y)*Ny
 	
-	precisionCoef <- riwish(Nvar + shapevar, meanVar+sampleCov)	
+	result <- riwish(Ny + shapeVar, meanVar+sampleCov)	
 	
-	
+	result
 	
 }

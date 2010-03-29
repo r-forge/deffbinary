@@ -17,6 +17,22 @@
      \code{\link{}}.
      }
 \examples{
+	
+	N=2
+	Ny = 10
+	meanY = rep(0, N)
+	varY = matrix(1, N, N)
+	diag(varY) = 2
+	
+	y = rmvnorm(Ny, meanY, varY)
+	
+	meanVar = diag(N)
+	shapeVar = N+2
+	
+	meanY= matrix(meanY, Ny, N, byrow=T)
+
+	updateGaussianWishart(y, meanVar, shapeVar, meanY)  
+
      }
 \keyword{}
 
