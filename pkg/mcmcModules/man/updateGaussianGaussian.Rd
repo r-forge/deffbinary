@@ -52,7 +52,7 @@ the conditional distribution for the multivariate normal as found at
 	# generate posterior sample
 	posteriorSample = updateGaussianGaussian(y, X, 
 		offsetY=offset, precisionY=precisionY, 
-		meanCoef=c(1,2), precisionCoef=c(0.01, 0.01))
+		meanCoef=c(1,2), precisionCoef=c(0.01, 0.01), varCoef=NULL)
 	posteriorSample	 
     }
 \keyword{}

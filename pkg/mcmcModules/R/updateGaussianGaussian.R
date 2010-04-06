@@ -13,7 +13,7 @@ updateGaussianGaussian<- function(y, X=1, offsetY,
 		if(is.vector(precisionCoef)) {
 			varCoef = 1/precisionCoef	
 		} else {
-			varCoef =chol2inv(chol(precisionCoef))	
+			varCoef =chol2inv(chol(precisionCoef))	###get the inverse of precision matrix
 		}
 	}
 	# compute X %*% varCoef
@@ -45,9 +45,9 @@ updateGaussianGaussian<- function(y, X=1, offsetY,
 	# conditional variance matrix of coefficients
 	precisionYmarg = chol2inv(chol(varYmarg))
 
-	varCoefXY = t(varCoefX) %*% precisionYmarg
+	varCoefXY = t(XvarCoef) %*% precisionYmarg
 
-	CondVar <- varCoefXY %*% varCoefX
+	CondVar <- varCoefXY %*% XvarCoef
 		
 	postMean <-  meanCoef +  varCoefXY %*% (y-offsetY)
 	

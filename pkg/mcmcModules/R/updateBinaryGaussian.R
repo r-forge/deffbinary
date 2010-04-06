@@ -24,7 +24,7 @@ if(link=="logit") {
 # function to simulate from the proposal, depends on whether proposal is independent
 if(is.vector(sdProposal)){
 	# function to simulate from the proposal distribution
-	simProp <- function() rnorm(Ncoef,mean=coef, sd=sdProposal)
+	simProp <- function() rnorm(1,mean=coef, sd=sdProposal)
 } else {
 	# assume sdProposal is a variance matrix
 	simProp <- function() as.vector(rmvnorm(1,mean=coef, sigma=sdProposal))
@@ -64,7 +64,7 @@ for(Diter in 1:niter){
 	ratio <- exp(sum(
 					y*(logProbsNew$probs - logProbsOld$probs) - 
 							onemy*(logProbsNew$onemProbs - logProbsOld$onemProbs)
-					) + 
+					,na.rm=T) + 
 			priorDiff())
 
 	accept = runif(1)<ratio
@@ -79,7 +79,7 @@ for(Diter in 1:niter){
 	#posterior distribution of the variance-covariance matrix 
    
 
-))	
+	
 	attributes(coef)$mcmc <- c(acceptRatio=acceptRatio/niter,
 				niter=niter)
 	attributes(coef)$sdProposal = sdProposal	

@@ -42,7 +42,7 @@ A vector of coefficients, with attributes specifying acceptance rates.
 \examples{
 	# simulate some data
 	Nobservations = 20
-	X = cbind(c(1:5, 2:6,rep(1,10)), 1:20)
+	X = cbind(rep(1,20), 1:20)
 	coef = c(0.1, 1)
 	
 	offset = seq(from=-5, len=Nobservations, by=1)
