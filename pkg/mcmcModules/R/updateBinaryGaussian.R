@@ -24,7 +24,7 @@ if(link=="logit") {
 # function to simulate from the proposal, depends on whether proposal is independent
 if(is.vector(sdProposal)){
 	# function to simulate from the proposal distribution
-	simProp <- function() rnorm(1,mean=coef, sd=sdProposal)
+	simProp <- function() rnorm(length(coef),mean=coef, sd=sdProposal)
 } else {
 	# assume sdProposal is a variance matrix
 	simProp <- function() as.vector(rmvnorm(1,mean=coef, sigma=sdProposal))
@@ -52,7 +52,7 @@ for(Diter in 1:niter){
 	# simulate proposal	
 	proposedCoef <- simProp()
 
-	
+
 	# calculate old and new probabilities
 	logProbsOld <- logProbs(offsetY + as.matrix(X) %*% coef) 
 	logProbsNew <- logProbs(offsetY + as.matrix(X) %*% proposedCoef) 

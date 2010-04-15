@@ -29,7 +29,7 @@
 	\deqn{	coef ~ N(meanCoef, precisionCoef^(-1))}
 A simulation from [coef|Y] is returned, using
 the conditional distribution for the multivariate normal as found at 
-\code{en.wikipedia.org/wiki/Multivariate\_normal\_distribution\#Conditional\_distributions}
+\code{en.wikipedia.org/wiki/Multivariate\_normal\_distribution}
 }    
 \seealso{
      \code{\link{updateBinaryGaussian}}.

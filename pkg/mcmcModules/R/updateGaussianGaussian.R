@@ -42,8 +42,13 @@ updateGaussianGaussian<- function(y, X=1, offsetY,
 		
 	}
 
+  print(varYmarg)
 	# conditional variance matrix of coefficients
-	precisionYmarg = chol2inv(chol(varYmarg))
+	if(is.matrix(varYmarg)) {
+  	precisionYmarg = chol2inv(chol(varYmarg))
+  } else {
+    precisionYmarg = 1/varYmarg                         
+  }
 
 	varCoefXY = t(XvarCoef) %*% precisionYmarg
 
