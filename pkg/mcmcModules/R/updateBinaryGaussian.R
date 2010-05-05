@@ -56,18 +56,17 @@ for(Diter in 1:niter){
 	# calculate old and new probabilities
 	logProbsOld <- logProbs(offsetY + as.matrix(X) %*% coef) 
 	logProbsNew <- logProbs(offsetY + as.matrix(X) %*% proposedCoef) 
-
+ 
 	# calculate old and new likelihoods
 		# log likelihood is y*logProbsOld + (1-y)*(1-logProbsOld)
 	onemy = 1-y
 
-	ratio <- exp(sum(
-					y*(logProbsNew$probs - logProbsOld$probs) - 
-							onemy*(logProbsNew$onemProbs - logProbsOld$onemProbs)
-					,na.rm=T) + 
+	ratio <- exp(
+    sum(y*(logProbsNew$probs - logProbsOld$probs)) + 
+			sum(onemy*(logProbsNew$onemProbs - logProbsOld$onemProbs)) + 
 			priorDiff())
 
-	accept = runif(1)<ratio
+	accept = runif(1) < ratio
 	
 	if(accept) {
 	  coefold <- coef
