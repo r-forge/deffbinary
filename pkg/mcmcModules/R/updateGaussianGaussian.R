@@ -20,14 +20,16 @@ updateGaussianGaussian<- function(y, X=1, offsetY,
 	# different methods depending on whether varCoef is diagonal matrix
 	# stored as a vector
 	if(is.vector(varCoef)) {
-		XvarCoef = X * matrix(varCoef, nrow=length(y),ncol=Ncoef) 
+		XvarCoef = X %*% diag(varCoef, nrow=Ncoef,ncol=Ncoef) 
 	} else {	
 		XvarCoef =  X %*% varCoef   
 	}	
 	
 	# marginal variance of coefficients
 	varYmarg = XvarCoef %*% t(X) 
+	 
 	if(is.null(varY)){
+
 		if(is.vector(precisionY)) {
 			diag(varYmarg) = diag(varYmarg) + 1/precisionY	
 		} else {
@@ -42,7 +44,7 @@ updateGaussianGaussian<- function(y, X=1, offsetY,
 		
 	}
 
-  print(varYmarg)
+ 
 	# conditional variance matrix of coefficients
 	if(is.matrix(varYmarg)) {
   	precisionYmarg = chol2inv(chol(varYmarg))
@@ -50,16 +52,22 @@ updateGaussianGaussian<- function(y, X=1, offsetY,
     precisionYmarg = 1/varYmarg                         
   }
 
+  CondVar <-  t(XvarCoef) %*% precisionYmarg %*% XvarCoef
+
 	varCoefXY = t(XvarCoef) %*% precisionYmarg
 
 	CondVar <- varCoefXY %*% XvarCoef
 		
 	postMean <-  meanCoef +  varCoefXY %*% (y-offsetY)
-	
+	if(any(is.na(postMean)))                                   {
+	aa = list(postMean, meanCoef, varCoefXY, y, offsetY)
+	 save(aa, file="thisdoesntwork.RData")
+	 warning("eeks, stuff happening,patrick is panic")
+  }
 	
 	if(is.vector(varCoef)){
-		CondVar <-  - CondVar
-		diag(CondVar) <- varCoef + diag(CondVar)
+
+		diag(CondVar) <- varCoef - diag(CondVar)
 	} else {
 		CondVar <- varCoef - CondVar
 	}
