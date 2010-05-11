@@ -51,14 +51,14 @@ updateGaussianGaussian<- function(y, X=1, offsetY,
   } else {
     precisionYmarg = 1/varYmarg                         
   }
-
+                                                            
   CondVar <-  t(XvarCoef) %*% precisionYmarg %*% XvarCoef
 
 	varCoefXY = t(XvarCoef) %*% precisionYmarg
 
 	CondVar <- varCoefXY %*% XvarCoef
-		
-	postMean <-  meanCoef +  varCoefXY %*% (y-offsetY)
+		  
+	postMean <-  meanCoef +  varCoefXY %*% (y-offsetY-meanCoef*X)
 	if(any(is.na(postMean)))                                   {
 	aa = list(postMean, meanCoef, varCoefXY, y, offsetY)
 	 save(aa, file="thisdoesntwork.RData")
