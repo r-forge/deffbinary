@@ -1,4 +1,4 @@
-updateBinaryGaussian <- function(y, X, coef, offsetY=0, precisionCoef, 
+updateBinaryGaussian <- function(y, X, coef, offsetY=0, precisionCoef, meanCoef=0,
 		niter=1, sdProposal=1, link=c("logit","cloglog"), ...) {	
 	
 # function to calculate logs of probabilities
@@ -34,12 +34,12 @@ if(is.vector(sdProposal)){
 					# depends on whether prior is independent or not
 if(is.vector(precisionCoef)){
 	priorDiff <- function() {
-		coefDiff = proposedCoef - coef
-		-0.5*sum(coefDiff^2*precisionCoef)
+		-0.5*sum( ( (proposedCoef-meanCoef)^2 - (coef - meanCoef)^2)* precisionCoef) 
 	}
 } else{
 	priorDiff <- function() {
-		-0.5*(proposedCoef %*% precisionCoef %*% proposedCoef  - coef %*% precisionCoef %*% coef)     
+		-0.5*((proposedCoef-meanCoef) %*% precisionCoef %*% (proposedCoef-meanCoef)  - 
+      (coef-meanCoef) %*% precisionCoef %*% (coef-meanCoef))     
 	}
 }
 
@@ -58,7 +58,7 @@ for(Diter in 1:niter){
 	logProbsNew <- logProbs(offsetY + as.matrix(X) %*% proposedCoef) 
  
 	# calculate old and new likelihoods
-		# log likelihood is y*logProbsOld + (1-y)*(1-logProbsOld)
+		# log likelihood is y*logProbsOld + (1-y)*log(1-ProbsOld)
 	onemy = 1-y
 
 	ratio <- exp(

@@ -1,6 +1,6 @@
 updateGaussianGaussian<- function(y, X=1, offsetY, 
 		precisionY=NULL, varY=NULL,
-		meanCoef, precisionCoef=NULL, varCoef = NULL,
+		meanCoef, precisionCoef=NULL, varCoef = NULL, XvarCoef=NULL,
 		...){
 	if(is.matrix(X)){
 		Ncoef =dim(X)[2]
@@ -19,12 +19,13 @@ updateGaussianGaussian<- function(y, X=1, offsetY,
 	# compute X %*% varCoef
 	# different methods depending on whether varCoef is diagonal matrix
 	# stored as a vector
+	if (is.null(XvarCoef)){
 	if(is.vector(varCoef)) {
 		XvarCoef = X %*% diag(varCoef, nrow=Ncoef,ncol=Ncoef) 
 	} else {	
 		XvarCoef =  X %*% varCoef   
 	}	
-	
+	}
 	# marginal variance of coefficients
 	varYmarg = XvarCoef %*% t(X) 
 	 
@@ -52,7 +53,7 @@ updateGaussianGaussian<- function(y, X=1, offsetY,
     precisionYmarg = 1/varYmarg                         
   }
                                                             
-  CondVar <-  t(XvarCoef) %*% precisionYmarg %*% XvarCoef
+  
 
 	varCoefXY = t(XvarCoef) %*% precisionYmarg
 
