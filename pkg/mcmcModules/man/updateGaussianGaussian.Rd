@@ -14,7 +14,7 @@
      \item{y}{Vector of Gaussian distributed observations}
      \item{X}{Matrix or vector of covariates, defaults to intercept only}
      \item{offsetY}{offsets, defaults to zero}
-     \item{precisionY}{Precision (scalar, vector or matrix) of observations.  
+     \item{precisionY}{Precision (scalar, vector or matrix) of observations conditional on coefficients.  
      	If scalar or vector, it is converted to a diagonal precision matrix.}
      \item{varY}{Can be specified in place of precisionY}
      \item{meanCoef}{marginal mean for coefficients}
@@ -57,4 +57,18 @@ the conditional distribution for the multivariate normal as found at
     }
 \keyword{}
 
-                                     
+             
+	Nobservations = 20
+	X = cbind(1, 1:20)
+	coef = c(0, 1)
+	
+	offset = seq(from=-5, len=Nobservations, by=1)
+	
+	meanObs = X %*% coef + offset
+	
+	precisionY <- 2
+	
+	y1 = rnorm(Nobservations, meanObs, precisionY^(-0.5))
+	y2=  rnorm(Nobservations, meanObs+1, precisionY^(-0.5))
+  y=cbind(y1,y2)
+                 
