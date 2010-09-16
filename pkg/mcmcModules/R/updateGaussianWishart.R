@@ -1,21 +1,31 @@
-updateGaussianWishart <- function(y, meanVar, shapeVar, meanY=mean(y),
+updateGaussianWishart <- function(y, scaleVar, dfVar, meanY=0,
   returnPrecision=F, 
 		 ...) {
+	if(is.matrix(y) & is.vector(meanY)) {
+	  meanY = matrix(meanY, byrow=T, nrow=nrow(y), ncol=ncol(y))
+	}
 	
 	y = y - meanY
 	 
 	if(is.matrix(y)) {
-		Ny = dim(y)[1]
+		Ny = dim(y)[2]
 	} else {
 		Ny = length(y)
 	}
 	
-	if(returnPrecision) {
-	 result <- 1/sqrt(riwish(Ny + shapeVar, meanVar+sum(y^2)))		
+	if(is.vector(y) & returnPrecision) {
+	 result = 1/riwish(Ny + shapeVar, scaleVar+sum(y^2))
+  }	else if(is.vector(y) & !returnPrecision) { 
+	 result <- riwish(Ny + shapeVar, scaleVar+sum(y^2))		
+	} else if(is.matrix(y) & !returnPrecision) {
+	 result <- riwish(Ny + shapeVar, scaleVar+t(y)%*%y)	
+	} else if(is.matrix(y) & returnPrecision) {
+	 result <- solve(riwish(Ny + shapeVar, scaleVar+t(y)%*%y))	
 	} else {
-	 result <- riwish(Ny + shapeVar, meanVar+sum(y^2))	
+	   cat("arghhhhhh.....")
 	}
 	
 	result
 	
 }
+
