@@ -14,13 +14,13 @@ updateGaussianWishart <- function(y, scaleVar, dfVar, meanY=0,
 	}
 	
 	if(is.vector(y) & returnPrecision) {
-	 result = 1/riwish(Ny + shapeVar, scaleVar+sum(y^2))
+	 result = 1/riwish(Ny + dfVar, scaleVar+sum(y^2))
   }	else if(is.vector(y) & !returnPrecision) { 
-	 result <- riwish(Ny + shapeVar, scaleVar+sum(y^2))		
+	 result <- riwish(Ny + dfVar, scaleVar+sum(y^2))		
 	} else if(is.matrix(y) & !returnPrecision) {
-	 result <- riwish(Ny + shapeVar, scaleVar+t(y)%*%y)	
+	 result <- riwish(Ny + dfVar, scaleVar+t(y)%*%y)	
 	} else if(is.matrix(y) & returnPrecision) {
-	 result <- solve(riwish(Ny + shapeVar, scaleVar+t(y)%*%y))	
+	 result <- solve(riwish(Ny + dfVar, scaleVar+t(y)%*%y))	
 	} else {
 	   cat("arghhhhhh.....")
 	}
